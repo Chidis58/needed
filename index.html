@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Angel — Your Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e6f0;
+    --text-dim: rgba(232,230,240,0.45);
+    --text-muted: rgba(232,230,240,0.2);
+    --angel: #c9b8ff;
+    --angel-dim: rgba(201,184,255,0.15);
+    --angel-glow: rgba(201,184,255,0.06);
+    --alert-red: #ff6b6b;
+    --alert-amber: #ffa94d;
+    --alert-green: #69db7c;
+    --alert-blue: #74c0fc;
+    --radius: 16px;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201,184,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; flex-direction: column; min-height: 100dvh; position: relative; z-index: 1; }
+  .screen.active { display: flex; }
+
+  /* ─── ONBOARDING ─── */
+  #screen-onboard {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 28px;
+    text-align: center;
+    gap: 0;
+  }
+
+  .angel-halo {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 40px;
+  }
+
+  .halo-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(201,184,255,0.2);
+    animation: halo-pulse 4s ease-in-out infinite;
+  }
+  .halo-ring:nth-child(1) { inset: 0; animation-delay: 0s; }
+  .halo-ring:nth-child(2) { inset: -12px; animation-delay: 0.6s; opacity: 0.6; }
+  .halo-ring:nth-child(3) { inset: -24px; animation-delay: 1.2s; opacity: 0.3; }
+
+  @keyframes halo-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.04); opacity: 1; }
+  }
+
+  .halo-core {
+    position: absolute;
+    inset: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(201,184,255,0.25), rgba(201,184,255,0.05));
+    border: 1px solid rgba(201,184,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+  }
+
+  .onboard-title {
+    font-size: clamp(48px, 14vw, 72px);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .onboard-subtitle {
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text-dim);
+    font-weight: 300;
+    margin-bottom: 56px;
+    letter-spacing: 0.03em;
+  }
+
+  .onboard-features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 340px;
+    margin-bottom: 52px;
+  }
+
+  .feature-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+  }
+
+  .feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--angel-dim);
+    border: 1px solid rgba(201,184,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .feature-text { font-size: 15px; color: var(--text-dim); font-weight: 300; line-height: 1.4; }
+  .feature-text strong { color: var(--text); font-weight: 400; }
+
+  .btn-primary {
+    background: var(--angel-dim);
+    border: 1px solid rgba(201,184,255,0.35);
+    color: var(--angel);
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    padding: 16px 48px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .btn-primary:hover, .btn-primary:active {
+    background: rgba(201,184,255,0.22);
+    border-color: rgba(201,184,255,0.6);
+    box-shadow: 0 0 32px rgba(201,184,255,0.12);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--serif);
+    font-size: 15px;
+    padding: 10px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  /* ─── SETTINGS ─── */
+  #screen-settings {
+    padding: 60px 24px 40px;
+    gap: 0;
+  }
+
+  .settings-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .back-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .settings-title {
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  .settings-section {
+    margin-bottom: 32px;
+  }
+
+  .settings-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  .provider-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .provider-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .provider-card.selected {
+    border-color: rgba(201,184,255,0.5);
+    background: var(--angel-dim);
+  }
+
+  .provider-card:hover { border-color: rgba(255,255,255,0.15); }
+
+  .provider-logo { font-size: 20px; }
+  .provider-name { font-size: 14px; font-weight: 400; }
+  .provider-check { margin-left: auto; font-size: 14px; color: var(--angel); opacity: 0; }
+  .provider-card.selected .provider-check { opacity: 1; }
+
+  .input-field {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: rgba(201,184,255,0.4); }
+  .input-field::placeholder { color: var(--text-muted); }
+
+  .model-select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .save-btn {
+    width: 100%;
+    background: var(--angel-dim);
+    border: 1px solid rgba(201,184,255,0.35);
+    color: var(--angel);
+    font-family: var(--serif);
+    font-size: 18px;
+    padding: 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+  }
+  .save-btn:hover { background: rgba(201,184,255,0.22); }
+
+  /* ─── MAIN ─── */
+  #screen-main {
+    padding: 0;
+    position: relative;
+  }
+
+  .main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 52px 24px 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .header-brand {
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--angel);
+  }
+
+  .header-actions { display: flex; gap: 10px; }
+
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  /* ─── ORB ─── */
+  .orb-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 32px;
+    position: relative;
+  }
+
+  .orb-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    cursor: pointer;
+  }
+
+  .orb-outer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(201,184,255,0.1);
+    transition: all 0.5s ease;
+  }
+
+  .orb-mid {
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,184,255,0.15);
+    transition: all 0.5s ease;
+  }
+
+  .orb {
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, rgba(201,184,255,0.18), rgba(150,120,255,0.08), transparent 70%);
+    border: 1px solid rgba(201,184,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: all 0.5s ease;
+    box-shadow: 0 0 40px rgba(201,184,255,0.05), inset 0 0 30px rgba(201,184,255,0.03);
+  }
+
+  /* Listening state */
+  .orb-wrap.listening .orb {
+    background: radial-gradient(circle at 38% 32%, rgba(201,184,255,0.3), rgba(150,120,255,0.15), transparent 70%);
+    border-color: rgba(201,184,255,0.5);
+    box-shadow: 0 0 60px rgba(201,184,255,0.15), inset 0 0 40px rgba(201,184,255,0.08);
+    animation: orb-breathe 3s ease-in-out infinite;
+  }
+
+  .orb-wrap.listening .orb-outer {
+    border-color: rgba(201,184,255,0.2);
+    animation: ring-expand 3s ease-in-out infinite;
+  }
+
+  .orb-wrap.listening .orb-mid {
+    border-color: rgba(201,184,255,0.15);
+    animation: ring-expand 3s ease-in-out infinite 0.5s;
+  }
+
+  @keyframes orb-breathe {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(201,184,255,0.15); }
+    50% { transform: scale(1.04); box-shadow: 0 0 80px rgba(201,184,255,0.25); }
+  }
+
+  @keyframes ring-expand {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.06); opacity: 1; }
+  }
+
+  .orb-status {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.3s;
+  }
+
+  .orb-status.listening { color: var(--angel); }
+
+  /* ─── WAVEFORM ─── */
+  .waveform-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 24px;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .waveform-bar.active { opacity: 1; }
+
+  .wave-line {
+    width: 2px;
+    border-radius: 2px;
+    background: var(--angel);
+    opacity: 0.6;
+    animation: wave-anim 1.2s ease-in-out infinite;
+  }
+  .wave-line:nth-child(1) { height: 6px; animation-delay: 0s; }
+  .wave-line:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+  .wave-line:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+  .wave-line:nth-child(4) { height: 24px; animation-delay: 0.3s; }
+  .wave-line:nth-child(5) { height: 16px; animation-delay: 0.4s; }
+  .wave-line:nth-child(6) { height: 10px; animation-delay: 0.5s; }
+  .wave-line:nth-child(7) { height: 18px; animation-delay: 0.35s; }
+  .wave-line:nth-child(8) { height: 12px; animation-delay: 0.25s; }
+  .wave-line:nth-child(9) { height: 8px; animation-delay: 0.15s; }
+
+  @keyframes wave-anim {
+    0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+    50% { transform: scaleY(1); opacity: 0.8; }
+  }
+
+  /* ─── TRANSCRIPT ─── */
+  .transcript-section {
+    margin: 0 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .transcript-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .transcript-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .transcript-clear {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .transcript-clear:hover { color: var(--text-dim); }
+
+  .transcript-body {
+    padding: 14px 16px;
+    min-height: 80px;
+    max-height: 140px;
+    overflow-y: auto;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .transcript-body::-webkit-scrollbar { width: 3px; }
+  .transcript-body::-webkit-scrollbar-track { background: transparent; }
+  .transcript-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .transcript-placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  /* ─── ALERTS FEED ─── */
+  .alerts-section {
+    flex: 1;
+    margin: 16px 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .alerts-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  .alerts-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 100px;
+  }
+
+  .alerts-feed::-webkit-scrollbar { width: 0; }
+
+  .alert-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  /* ─── ALERT CARD ─── */
+  .alert-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+    border-left: 3px solid transparent;
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    animation: card-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .alert-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    opacity: 0.3;
+  }
+
+  .alert-card.danger { border-left-color: var(--alert-red); }
+  .alert-card.danger::before { background: var(--alert-red); }
+
+  .alert-card.warning { border-left-color: var(--alert-amber); }
+  .alert-card.warning::before { background: var(--alert-amber); }
+
+  .alert-card.info { border-left-color: var(--alert-blue); }
+  .alert-card.info::before { background: var(--alert-blue); }
+
+  .alert-card.safe { border-left-color: var(--alert-green); }
+  .alert-card.safe::before { background: var(--alert-green); }
+
+  .alert-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .alert-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .alert-card.danger .alert-badge { color: var(--alert-red); background: rgba(255,107,107,0.1); }
+  .alert-card.warning .alert-badge { color: var(--alert-amber); background: rgba(255,169,77,0.1); }
+  .alert-card.info .alert-badge { color: var(--alert-blue); background: rgba(116,192,252,0.1); }
+  .alert-card.safe .alert-badge { color: var(--alert-green); background: rgba(105,219,124,0.1); }
+
+  .alert-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .alert-time { font-family: var(--mono); font-size: 10px; color: var(--text-muted); flex-shrink: 0; }
+
+  .alert-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .alert-body {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .alert-source {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── BOTTOM BAR ─── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 24px 32px;
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .main-action-btn {
+    background: var(--angel-dim);
+    border: 1px solid rgba(201,184,255,0.35);
+    color: var(--angel);
+    font-family: var(--serif);
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    padding: 14px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1;
+    max-width: 280px;
+  }
+
+  .main-action-btn.stop {
+    background: rgba(255,107,107,0.1);
+    border-color: rgba(255,107,107,0.35);
+    color: var(--alert-red);
+  }
+
+  .main-action-btn:hover { filter: brightness(1.1); }
+
+  /* ─── PROCESSING INDICATOR ─── */
+  .processing-pill {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--angel);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .processing-pill.visible { opacity: 1; }
+
+  .processing-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--angel);
+    animation: proc-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes proc-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ─── NO CONFIG WARNING ─── */
+  .no-config-banner {
+    margin: 0 16px 16px;
+    padding: 12px 16px;
+    background: rgba(255,169,77,0.08);
+    border: 1px solid rgba(255,169,77,0.25);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--alert-amber);
+    line-height: 1.5;
+    display: none;
+  }
+  .no-config-banner.show { display: block; }
+
+  /* ─── MIC PERMISSION SCREEN ─── */
+  #screen-mic {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 28px;
+    text-align: center;
+    gap: 0;
+  }
+
+  .mic-icon-wrap {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--angel-dim);
+    border: 1px solid rgba(201,184,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 32px;
+    animation: halo-pulse 3s ease-in-out infinite;
+  }
+
+  .mic-title {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+  }
+
+  .mic-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--text-dim);
+    line-height: 1.7;
+    max-width: 300px;
+    margin: 0 auto 36px;
+    font-style: italic;
+  }
+
+  .mic-steps {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .mic-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .mic-step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--angel-dim);
+    border: 1px solid rgba(201,184,255,0.3);
+    color: var(--angel);
+    font-family: var(--mono);
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .mic-step-text { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .mic-step-text strong { color: var(--text); font-weight: 400; }
+
+  .mic-error {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: rgba(255,107,107,0.08);
+    border: 1px solid rgba(255,107,107,0.25);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--alert-red);
+    line-height: 1.5;
+    max-width: 320px;
+    display: none;
+  }
+  .mic-error.show { display: block; }
+
+  .transcription-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .transcription-badge .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .transcription-badge.speech .dot { background: var(--alert-green); }
+  .transcription-badge.groq .dot { background: var(--alert-blue); }
+  .transcription-badge.demo .dot { background: var(--alert-amber); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 0; }
+</style>
+</head>
+<body>
+
+<div class="processing-pill" id="processing-pill">
+  <div class="processing-dot"></div>
+  <span id="processing-text">Angel is thinking…</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="screen active" id="screen-onboard">
+  <div class="angel-halo">
+    <div class="halo-ring"></div>
+    <div class="halo-ring"></div>
+    <div class="halo-ring"></div>
+    <div class="halo-core">𖤍</div>
+  </div>
+
+  <h1 class="onboard-title">Angel</h1>
+  <p class="onboard-subtitle">Your silent guardian</p>
+
+  <div class="onboard-features">
+    <div class="feature-row">
+      <div class="feature-icon">🎙️</div>
+      <p class="feature-text"><strong>Listens</strong> to your surroundings through your microphone</p>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon">🛡️</div>
+      <p class="feature-text"><strong>Protects</strong> you — alerts when something matters</p>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon">🌐</div>
+      <p class="feature-text"><strong>Searches</strong> the internet to verify facts in real time</p>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon">⚖️</div>
+      <p class="feature-text"><strong>Works for you</strong> — flags contradictions and informs your decisions</p>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="goTo('screen-settings')">Configure Angel</button>
+  <button class="btn-ghost" onclick="skipSetup()">I'll set up later</button>
+</div>
+
+<div class="screen" id="screen-settings">
+  <div class="settings-header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <h2 class="settings-title">Configure Angel</h2>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">AI Provider</div>
+    <div class="provider-grid" id="provider-grid">
+      <div class="provider-card selected" data-provider="anthropic" onclick="selectProvider(this)">
+        <span class="provider-logo">🔮</span>
+        <span class="provider-name">Claude</span>
+        <span class="provider-check">✓</span>
+      </div>
+      <div class="provider-card" data-provider="openai" onclick="selectProvider(this)">
+        <span class="provider-logo">⚡</span>
+        <span class="provider-name">GPT-4o</span>
+        <span class="provider-check">✓</span>
+      </div>
+      <div class="provider-card" data-provider="xai" onclick="selectProvider(this)">
+        <span class="provider-logo">𝕏</span>
+        <span class="provider-name">Grok</span>
+        <span class="provider-check">✓</span>
+      </div>
+      <div class="provider-card" data-provider="google" onclick="selectProvider(this)">
+        <span class="provider-logo">✦</span>
+        <span class="provider-name">Gemini</span>
+        <span class="provider-check">✓</span>
+      </div>
+    </div>
+
+    <input type="password" class="input-field" id="ai-api-key"
+      placeholder="Paste your API key here" autocomplete="off">
+
+    <select class="model-select" id="model-select">
+      <option value="claude-sonnet-4-20250514">Claude Sonnet 4 (Recommended)</option>
+      <option value="claude-opus-4-20250514">Claude Opus 4 (Most Powerful)</option>
+      <option value="claude-haiku-4-5">Claude Haiku 4.5 (Fastest)</option>
+    </select>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Transcription</div>
+    <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:14px;">🟢</span>
+        <span style="font-size:13px;color:var(--text);">Browser Speech API</span>
+        <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--alert-green);background:rgba(105,219,124,0.1);padding:3px 8px;border-radius:10px;">FREE · No key</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:var(--mono);line-height:1.5;">Primary — works instantly, no setup needed</p>
+    </div>
+    <input type="password" class="input-field" id="groq-key"
+      placeholder="Groq API key (optional fallback)" autocomplete="off">
+    <p style="font-size:12px;color:var(--text-muted);margin-top:8px;padding-left:4px;font-family:var(--mono);line-height:1.6;">
+      Groq = free fallback when Speech API unavailable.<br>
+      Get free key: <span style="color:var(--angel);">console.groq.com</span>
+    </p>
+  </div>
+
+  <button class="save-btn" onclick="saveSettings()">Save & Start</button>
+</div>
+
+<div class="screen" id="screen-mic">
+  <div class="mic-icon-wrap">🎙️</div>
+  <h2 class="mic-title">Allow Microphone</h2>
+  <p class="mic-desc">Angel needs your microphone to listen and protect you. Your audio never leaves your device.</p>
+
+  <div class="mic-steps">
+    <div class="mic-step">
+      <div class="mic-step-num">1</div>
+      <div class="mic-step-text">Tap <strong>Grant Access</strong> below — your browser will ask for permission</div>
+    </div>
+    <div class="mic-step">
+      <div class="mic-step-num">2</div>
+      <div class="mic-step-text">Tap <strong>Allow</strong> on the browser popup that appears</div>
+    </div>
+    <div class="mic-step">
+      <div class="mic-step-num">3</div>
+      <div class="mic-step-text">If you accidentally denied it, go to <strong>Browser Settings → Site Permissions → Microphone</strong> and allow this page</div>
+    </div>
+  </div>
+
+  <div class="mic-error" id="mic-error">
+    ⚠ Microphone access was denied.<br>
+    Please go to your browser settings → Site permissions → Microphone → allow this site, then try again.
+  </div>
+
+  <button class="btn-primary" id="mic-grant-btn" onclick="requestMicPermission()">Grant Access</button>
+  <button class="btn-ghost" style="margin-top:14px" onclick="goTo('screen-main')">Continue without mic</button>
+</div>
+
+<div class="screen" id="screen-main">
+  <div class="main-header">
+    <span class="header-brand">Angel</span>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="goTo('screen-settings')" title="Settings">⚙</button>
+    </div>
+  </div>
+
+  <div class="no-config-banner" id="no-config-banner">
+    ⚠ No API keys configured. Angel will use demo mode. <span style="text-decoration:underline;cursor:pointer" onclick="goTo('screen-settings')">Configure now →</span>
+  </div>
+
+  <div class="orb-container">
+    <div class="orb-wrap" id="orb" onclick="toggleListening()">
+      <div class="orb-outer"></div>
+      <div class="orb-mid"></div>
+      <div class="orb">𖤍</div>
+    </div>
+    <div class="orb-status" id="orb-status">Tap to awaken</div>
+    <div class="waveform-bar" id="waveform">
+      <div class="wave-line"></div><div class="wave-line"></div>
+      <div class="wave-line"></div><div class="wave-line"></div>
+      <div class="wave-line"></div><div class="wave-line"></div>
+      <div class="wave-line"></div><div class="wave-line"></div>
+      <div class="wave-line"></div>
+    </div>
+    <div class="transcription-badge speech" id="transcription-badge" style="display:none;">
+      <div class="dot"></div>
+      <span id="transcription-badge-label">Browser Speech</span>
+    </div>
+  </div>
+
+  <div class="transcript-section">
+    <div class="transcript-header">
+      <span class="transcript-label">Live Transcript</span>
+      <button class="transcript-clear" onclick="clearTranscript()">clear</button>
+    </div>
+    <div class="transcript-body" id="transcript-body">
+      <span class="transcript-placeholder">Words will appear here as Angel listens…</span>
+    </div>
+  </div>
+
+  <div class="alerts-section">
+    <div class="alerts-label">Angel's Insights</div>
+    <div class="alerts-feed" id="alerts-feed">
+      <div class="alert-empty">
+        Angel is watching over you.<br>
+        <span style="font-size:12px">Insights will appear only when they matter.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="main-action-btn" id="main-action-btn" onclick="toggleListening()">
+      Awaken Angel
+    </button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const state = {
+  listening: false,
+  mediaRecorder: null,
+  audioChunks: [],
+  transcript: '',
+  sessionHistory: [],
+  chunkInterval: null,
+  analysisInterval: null,
+  provider: 'anthropic',
+  model: 'claude-sonnet-4-20250514',
+  aiKey: '',
+  groqKey: '',
+  previousScreen: 'screen-onboard',
+  stream: null,
+  speechRecognition: null,
+  transcriptionMode: 'demo',
+  micPermission: 'unknown',
+};
+
+const PROVIDERS = {
+  anthropic: {
+    models: [
+      { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4 (Recommended)' },
+      { value: 'claude-opus-4-20250514', label: 'Claude Opus 4 (Most Powerful)' },
+      { value: 'claude-haiku-4-5', label: 'Claude Haiku 4.5 (Fastest)' },
+    ]
+  },
+  openai: {
+    models: [
+      { value: 'gpt-4o', label: 'GPT-4o (Recommended)' },
+      { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Fast)' },
+      { value: 'o3', label: 'o3 (Reasoning)' },
+    ]
+  },
+  xai: {
+    models: [
+      { value: 'grok-3', label: 'Grok 3 (Latest)' },
+      { value: 'grok-2', label: 'Grok 2' },
+    ]
+  },
+  google: {
+    models: [
+      { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Fast)' },
+      { value: 'gemini-2.0-pro', label: 'Gemini 2.0 Pro' },
+    ]
+  }
+};
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goTo(screenId) {
+  state.previousScreen = document.querySelector('.screen.active')?.id || 'screen-onboard';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  if (screenId === 'screen-main') checkConfig();
+}
+
+function goBack() {
+  goTo(state.previousScreen === 'screen-settings' ? 'screen-onboard' : state.previousScreen);
+}
+
+function skipSetup() {
+  goTo('screen-main');
+}
+
+// ══════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════
+function selectProvider(card) {
+  document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.provider = card.dataset.provider;
+  updateModelSelect();
+}
+
+function updateModelSelect() {
+  const sel = document.getElementById('model-select');
+  const models = PROVIDERS[state.provider]?.models || [];
+  sel.innerHTML = models.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+}
+
+function saveSettings() {
+  state.aiKey = document.getElementById('ai-api-key').value.trim();
+  state.groqKey = document.getElementById('groq-key').value.trim();
+  state.model = document.getElementById('model-select').value;
+
+  localStorage.setItem('angel_provider', state.provider);
+  localStorage.setItem('angel_model', state.model);
+  if (state.aiKey) localStorage.setItem('angel_ai_key', state.aiKey);
+  if (state.groqKey) localStorage.setItem('angel_groq_key', state.groqKey);
+
+  showToast('Settings saved ✓');
+  setTimeout(() => goTo('screen-main'), 600);
+}
+
+function loadSettings() {
+  state.provider = localStorage.getItem('angel_provider') || 'anthropic';
+  state.model = localStorage.getItem('angel_model') || 'claude-sonnet-4-20250514';
+  state.aiKey = localStorage.getItem('angel_ai_key') || '';
+  state.groqKey = localStorage.getItem('angel_groq_key') || '';
+
+  document.querySelectorAll('.provider-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.provider === state.provider);
+  });
+  updateModelSelect();
+  if (state.aiKey) document.getElementById('ai-api-key').value = state.aiKey;
+  if (state.groqKey) document.getElementById('groq-key').value = state.groqKey;
+  const modelSel = document.getElementById('model-select');
+  if (modelSel) modelSel.value = state.model;
+}
+
+function checkConfig() {
+  const banner = document.getElementById('no-config-banner');
+  banner.classList.toggle('show', !state.aiKey);
+}
+
+// ══════════════════════════════════════════
+// MIC PERMISSION (REVISED)
+// ══════════════════════════════════════════
+async function requestMicPermission() {
+  const btn = document.getElementById('mic-grant-btn');
+  const errEl = document.getElementById('mic-error');
+  btn.textContent = 'Requesting…';
+  errEl.classList.remove('show');
+
+  // 1. Secure Context / API Availability Check
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    errEl.innerHTML = '⚠ <strong>API Unavailable:</strong> Microphone access requires a secure context. Please serve this file over <code>localhost</code> or <code>https://</code>.';
+    errEl.classList.add('show');
+    btn.textContent = 'Unavailable';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    
+    // Got it — stop the test stream immediately
+    stream.getTracks().forEach(t => t.stop());
+    state.micPermission = 'granted';
+    
+    btn.textContent = 'Access Granted ✓';
+    btn.style.opacity = '0.6';
+    btn.disabled = true;
+    
+    showToast('Microphone ready ✓');
+    setTimeout(() => goTo('screen-main'), 800);
+    
+  } catch (e) {
+    state.micPermission = 'denied';
+
+    // 2. Handle Hard Denials vs. Other Errors
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      errEl.innerHTML = '⚠ <strong>Permission Denied:</strong> The browser blocked access.<br><br>Please go to your browser settings → Site permissions → Microphone → allow this site, then refresh the page.';
+      btn.textContent = 'Permission Blocked';
+      btn.disabled = true; 
+      btn.style.opacity = '0.5';
+    } else {
+      errEl.innerHTML = `⚠ <strong>Error:</strong> ${e.message}`;
+      btn.textContent = 'Try Again';
+    }
+    
+    errEl.classList.add('show');
+  }
+}
+
+async function checkMicPermission() {
+  // Check existing permission state without prompting
+  if (navigator.permissions) {
+    try {
+      const result = await navigator.permissions.query({ name: 'microphone' });
+      state.micPermission = result.state; // 'granted' | 'denied' | 'prompt'
+      return result.state;
+    } catch (e) { return 'unknown'; }
+  }
+  return 'unknown';
+}
+
+// ══════════════════════════════════════════
+// LISTENING
+// ══════════════════════════════════════════
+async function toggleListening() {
+  if (state.listening) {
+    stopListening();
+  } else {
+    await startListening();
+  }
+}
+
+async function startListening() {
+  // Determine transcription mode
+  const hasSpeechAPI = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+
+  if (hasSpeechAPI) {
+    // PRIMARY: Browser Web Speech API — no mic prompt needed separately, it handles its own
+    const started = startSpeechRecognition();
+    if (!started) {
+      // fallback to MediaRecorder + Groq
+      await startMediaRecorder();
+    }
+  } else if (state.groqKey) {
+    await startMediaRecorder();
+  } else {
+    // Demo mode — no mic needed
+    startDemoMode();
+  }
+}
+
+function setListeningUI(on) {
+  document.getElementById('orb').classList.toggle('listening', on);
+  const status = document.getElementById('orb-status');
+  status.textContent = on ? 'Listening…' : 'Tap to awaken';
+  status.classList.toggle('listening', on);
+  document.getElementById('waveform').classList.toggle('active', on);
+  const btn = document.getElementById('main-action-btn');
+  btn.textContent = on ? 'Stop Angel' : 'Awaken Angel';
+  btn.classList.toggle('stop', on);
+  const badge = document.getElementById('transcription-badge');
+  badge.style.display = on ? 'inline-flex' : 'none';
+}
+
+function setBadge(mode) {
+  const badge = document.getElementById('transcription-badge');
+  const label = document.getElementById('transcription-badge-label');
+  badge.className = `transcription-badge ${mode}`;
+  const labels = { speech: 'Browser Speech', groq: 'Groq Whisper', demo: 'Demo Mode' };
+  label.textContent = labels[mode] || mode;
+}
+
+// ── Web Speech API (primary) ──
+function startSpeechRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return false;
+
+  try {
+    const recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    recognition.maxAlternatives = 1;
+
+    let finalBuffer = '';
+
+    recognition.onstart = () => {
+      state.listening = true;
+      state.transcriptionMode = 'speech';
+      setBadge('speech');
+      setListeningUI(true);
+      setTranscript('');
+      state.analysisInterval = setInterval(analyseTranscript, 30000);
+    };
+
+    recognition.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalBuffer += t + ' ';
+          appendTranscript(t.trim());
+        } else {
+          interim = t;
+        }
+      }
+      // Show interim in transcript preview
+      const el = document.getElementById('transcript-body');
+      if (interim) {
+        el.textContent = (state.transcript + ' ' + interim).trim();
+        el.scrollTop = el.scrollHeight;
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.warn('Speech recognition error:', event.error);
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        stopListening();
+        goTo('screen-mic');
+      } else if (event.error === 'no-speech') {
+        // Restart silently
+        if (state.listening) {
+          setTimeout(() => { try { recognition.start(); } catch(e){} }, 1000);
+        }
+      }
+    };
+
+    recognition.onend = () => {
+      // Auto-restart if still supposed to be listening
+      if (state.listening) {
+        setTimeout(() => { try { recognition.start(); } catch(e){} }, 300);
+      }
+    };
+
+    recognition.start();
+    state.speechRecognition = recognition;
+    return true;
+  } catch (e) {
+    console.error('SpeechRecognition init error:', e);
+    return false;
+  }
+}
+
+// ── MediaRecorder + Groq (fallback) ──
+async function startMediaRecorder() {
+  try {
+    state.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  } catch (e) {
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      goTo('screen-mic');
+    } else {
+      showToast('Microphone unavailable');
+      startDemoMode();
+    }
+    return;
+  }
+
+  state.listening = true;
+  state.transcriptionMode = state.groqKey ? 'groq' : 'demo';
+  setBadge(state.transcriptionMode);
+  setListeningUI(true);
+  setTranscript('');
+  recordChunk();
+  state.analysisInterval = setInterval(analyseTranscript, 30000);
+}
+
+function recordChunk() {
+  if (!state.stream || !state.listening) return;
+
+  const mimeType = getSupportedMimeType();
+  state.mediaRecorder = new MediaRecorder(state.stream, mimeType ? { mimeType } : {});
+  state.audioChunks = [];
+
+  state.mediaRecorder.ondataavailable = e => { if (e.data.size > 0) state.audioChunks.push(e.data); };
+  state.mediaRecorder.onstop = async () => {
+    if (!state.audioChunks.length) return;
+    const blob = new Blob(state.audioChunks, { type: mimeType || 'audio/webm' });
+    await transcribeWithGroq(blob);
+    if (state.listening) recordChunk();
+  };
+
+  state.mediaRecorder.start();
+  state.chunkInterval = setTimeout(() => {
+    if (state.mediaRecorder?.state === 'recording') state.mediaRecorder.stop();
+  }, 15000);
+}
+
+function getSupportedMimeType() {
+  const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+}
+
+// ── Demo mode (no mic/keys) ──
+function startDemoMode() {
+  state.listening = true;
+  state.transcriptionMode = 'demo';
+  setBadge('demo');
+  setListeningUI(true);
+  setTranscript('');
+
+  const demos = [
+    "I'm heading to the market on Lagos Island later today.",
+    "He said the price is fifty thousand naira but last week he told me forty.",
+    "The contract says payment is due in thirty days.",
+    "She mentioned the area has been having some issues lately.",
+    "This supplement claims to cure diabetes in two weeks.",
+    "He guaranteed me a 200% return on investment within one month.",
+  ];
+  let i = 0;
+  const pushDemo = () => {
+    if (!state.listening) return;
+    appendTranscript(demos[i % demos.length]);
+    i++;
+    state.chunkInterval = setTimeout(pushDemo, 8000);
+  };
+  state.chunkInterval = setTimeout(pushDemo, 3000);
+  state.analysisInterval = setInterval(analyseTranscript, 30000);
+}
+
+function stopListening() {
+  state.listening = false;
+
+  if (state.speechRecognition) {
+    try { state.speechRecognition.stop(); } catch(e){}
+    state.speechRecognition = null;
+  }
+  if (state.stream) {
+    state.stream.getTracks().forEach(t => t.stop());
+    state.stream = null;
+  }
+  if (state.mediaRecorder?.state !== 'inactive') {
+    try { state.mediaRecorder.stop(); } catch(e){}
+  }
+  clearTimeout(state.chunkInterval);
+  clearInterval(state.analysisInterval);
+
+  setListeningUI(false);
+  showToast('Angel is resting');
+}
+
+// ══════════════════════════════════════════
+// TRANSCRIPTION — Groq Whisper (fallback)
+// ══════════════════════════════════════════
+async function transcribeWithGroq(blob) {
+  if (!state.groqKey) {
+    // No key — inject demo line
+    const demos = ["The price just went up again.", "He promised it was safe.", "This area is under construction."];
+    appendTranscript(demos[Math.floor(Math.random() * demos.length)]);
+    return;
+  }
+
+  showProcessing('Transcribing…');
+  try {
+    const formData = new FormData();
+    formData.append('file', blob, 'audio.webm');
+    formData.append('model', 'whisper-large-v3-turbo');
+    formData.append('language', 'en');
+    formData.append('response_format', 'json');
+
+    const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${state.groqKey}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (data.text?.trim()) appendTranscript(data.text.trim());
+  } catch (e) {
+    console.error('Groq transcription error:', e);
+  } finally {
+    hideProcessing();
+  }
+}
+
+// ══════════════════════════════════════════
+// ANALYSIS — AI
+// ══════════════════════════════════════════
+async function analyseTranscript() {
+  if (!state.transcript.trim()) return;
+  const recentText = state.transcript.slice(-2000);
+  showProcessing('Angel is thinking…');
+  try {
+    let result;
+    if (state.provider === 'anthropic') result = await analyseWithClaude(recentText);
+    else if (state.provider === 'openai') result = await analyseWithOpenAI(recentText);
+    else result = demoAlert();
+    if (result) renderAlert(result);
+  } catch (e) {
+    console.error('Analysis error:', e);
+  } finally {
+    hideProcessing();
+  }
+}
+
+async function analyseWithClaude(text) {
+  if (!state.aiKey) return demoAlert();
+  const systemPrompt = `You are Angel, a silent AI guardian bound exclusively to protect and inform your user.
+
+You are listening to a live transcript of audio around the user. Your ONLY job is to alert the user when something genuinely important is detected — a potential danger, a contradiction with something said earlier, manipulation tactics, false claims, important decisions, or safety concerns.
+
+Do NOT alert for ordinary conversation. Only surface what truly matters.
+
+Respond ONLY in this exact JSON format (no markdown, no explanation):
+{"should_alert": true, "type": "danger|warning|info|safe", "title": "Short headline", "body": "2-3 sentences explaining what matters and what the user should do", "source": "transcript|knowledge|web"}
+
+If nothing important: {"should_alert": false}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': state.aiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({
+      model: state.model, max_tokens: 500, system: systemPrompt,
+      messages: [{ role: 'user', content: `History:\n${state.sessionHistory.slice(-5).join('\n')}\n\nTranscript:\n${text}\n\nJSON only.` }]
+    })
+  });
+  const data = await res.json();
+  const raw = data.content?.[0]?.text || '{"should_alert":false}';
+  try {
+    const p = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    return p.should_alert ? p : null;
+  } catch { return null; }
+}
+
+async function analyseWithOpenAI(text) {
+  if (!state.aiKey) return demoAlert();
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.aiKey}` },
+    body: JSON.stringify({
+      model: state.model, max_tokens: 500,
+      messages: [
+        { role: 'system', content: 'You are Angel, a silent AI guardian. Alert only when truly important. JSON: {"should_alert":bool,"type":"danger|warning|info|safe","title":"...","body":"...","source":"..."}. If nothing: {"should_alert":false}' },
+        { role: 'user', content: `Transcript: ${text}\n\nJSON only.` }
+      ]
+    })
+  });
+  const data = await res.json();
+  try {
+    const p = JSON.parse((data.choices?.[0]?.message?.content || '{"should_alert":false}').replace(/```json|```/g,'').trim());
+    return p.should_alert ? p : null;
+  } catch { return null; }
+}
+
+function demoAlert() {
+  const demos = [
+    { should_alert: true, type: 'warning', title: 'Price Contradiction Detected', body: 'The price mentioned now (₦50,000) differs from the earlier figure (₦40,000). This is a 25% increase. Ask for written clarification before agreeing.', source: 'Transcript analysis' },
+    { should_alert: true, type: 'info', title: 'Unverified Medical Claim', body: 'Claims of curing diabetes in two weeks are not supported by medical evidence. This pattern is typical of health scams. Consult a licensed physician before proceeding.', source: 'General knowledge' },
+    { should_alert: true, type: 'danger', title: 'High-Risk Investment Warning', body: 'Guaranteed 200% returns in one month is a hallmark of Ponzi schemes. No legitimate investment can guarantee these returns. Do not proceed without independent verification.', source: 'Financial knowledge' },
+    { should_alert: true, type: 'info', title: 'Area Safety Note', body: 'Lagos Island market areas can experience congestion and opportunistic crime during peak hours. Keep valuables secure and be aware of your surroundings.', source: 'General knowledge' },
+  ];
+  return demos[Math.floor(Math.random() * demos.length)];
+}
+
+// ══════════════════════════════════════════
+// TRANSCRIPT UI
+// ══════════════════════════════════════════
+function appendTranscript(text) {
+  if (!text?.trim()) return;
+  state.transcript += (state.transcript ? ' ' : '') + text;
+  state.sessionHistory.push(text);
+  setTranscript(state.transcript);
+
+  const triggers = ['heading to', 'going to', 'he said', 'she said', 'the price', 'sign', 'contract', 'danger', 'threat', 'cure', 'guarantee', 'promise', 'investment', 'returns', 'percent', 'problem'];
+  if (triggers.some(t => text.toLowerCase().includes(t))) {
+    clearInterval(state.analysisInterval);
+    setTimeout(analyseTranscript, 1500);
+    state.analysisInterval = setInterval(analyseTranscript, 30000);
+  }
+}
+
+function setTranscript(text) {
+  const el = document.getElementById('transcript-body');
+  if (!text) {
+    el.innerHTML = '<span class="transcript-placeholder">Words will appear here as Angel listens…</span>';
+  } else {
+    el.textContent = text;
+    el.scrollTop = el.scrollHeight;
+  }
+}
+
+function clearTranscript() {
+  state.transcript = '';
+  state.sessionHistory = [];
+  setTranscript('');
+}
+
+// ══════════════════════════════════════════
+// ALERTS UI
+// ══════════════════════════════════════════
+function renderAlert(alert) {
+  const feed = document.getElementById('alerts-feed');
+  const empty = feed.querySelector('.alert-empty');
+  if (empty) empty.remove();
+
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const labels = { danger: 'Danger', warning: 'Warning', info: 'Insight', safe: 'Clear' };
+
+  const card = document.createElement('div');
+  card.className = `alert-card ${alert.type}`;
+  card.innerHTML = `
+    <div class="alert-top">
+      <div class="alert-badge"><div class="alert-dot"></div>${labels[alert.type] || 'Alert'}</div>
+      <span class="alert-time">${time}</span>
+    </div>
+    <div class="alert-title">${escHtml(alert.title)}</div>
+    <div class="alert-body">${escHtml(alert.body)}</div>
+    ${alert.source ? `<div class="alert-source">Source: ${escHtml(alert.source)}</div>` : ''}
+  `;
+  feed.insertBefore(card, feed.firstChild);
+
+  if (['danger', 'warning'].includes(alert.type) && navigator.vibrate) {
+    navigator.vibrate([200, 100, 200]);
+  }
+}
+
+// ══════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════
+function showProcessing(text) {
+  document.getElementById('processing-text').textContent = text || 'Angel is thinking…';
+  document.getElementById('processing-pill').classList.add('visible');
+}
+function hideProcessing() {
+  document.getElementById('processing-pill').classList.remove('visible');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════
+// INIT (REVISED)
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  loadSettings();
+
+  // Check mic permission state silently
+  state.micPermission = await checkMicPermission();
+
+  // Smart Routing:
+  // If they have the API key and mic is already granted, skip to main.
+  if (state.aiKey && state.micPermission === 'granted') {
+    goTo('screen-main');
+  } 
+  // If they configured the app but haven't granted mic access yet, force the mic screen.
+  else if (state.aiKey && state.micPermission !== 'granted') {
+    goTo('screen-mic');
+  }
+  // Otherwise, they are brand new. Stay on onboarding.
+});
+</script>
+</body>
+</html>
+"initial commit"
